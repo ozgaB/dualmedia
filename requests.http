@@ -17,4 +17,5 @@ Content-Type: application/json
 }
 
 ### Zwracanie najważniejszych informacji (nie wszystkie) o zamówieniu w formacie JSON po podaniu identyfikatora zamówienia na wejściu
-GET https://localhost/orders/create
+# (!!! By zapytanie zwróciło wynik najpierw trzeba wykonać zapytanie powyżej, gdyż nie robiłem fixtur do zamówień)
+GET https://localhost/order/show/1

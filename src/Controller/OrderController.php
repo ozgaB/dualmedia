@@ -8,6 +8,7 @@ namespace App\Controller;
 use App\Entity\Order;
 use App\Entity\Product;
 use App\Form\Type\OrderType;
+use App\Utils\PriceCalculator;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,7 +25,11 @@ use Symfony\Component\Routing\Attribute\Route;
 class OrderController extends AbstractController
 {
     #[Route('/create', name: 'create', methods: ['POST'])]
-    public function create(EntityManagerInterface $manager, Request $request, LoggerInterface $logger): JsonResponse
+    public function create(
+        EntityManagerInterface $manager,
+        PriceCalculator $priceCalculator,
+        Request $request
+    ): JsonResponse
     {
         $order = new Order();
         $form = $this->createForm(OrderType::class, $order);
@@ -43,10 +48,8 @@ class OrderController extends AbstractController
                 $order->addOrderProduct($orderProduct);
             }
 
-            $order->setPriceSummaryGross(0);
-            $order->setProductsAmount(0);
-            $order->setPriceSummaryNet(0);
-
+            $priceCalculator->calculate($order);
+            $order->setProductsAmount($order->getOrderProducts()->count());
             $manager->persist($order);
             $manager->flush();
             $manager->commit();

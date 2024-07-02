@@ -22,7 +22,8 @@
         "symfony/serializer": "6.4.*",
         "symfony/uid": "6.4.*",
         "symfony/validator": "6.4.*",
-        "symfony/yaml": "6.4.*"
+        "symfony/yaml": "6.4.*",
+        "ext-bcmath": "*"
     },
     "config": {
         "allow-plugins": {

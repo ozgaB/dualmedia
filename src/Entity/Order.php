@@ -27,23 +27,29 @@ class Order
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
-    #[Groups(['order-create','order-show'])]
+    #[Groups(['order-create', 'order-show'])]
     private float $priceSummaryGross = 0;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
-    #[Groups(['order-create','order-show'])]
+    #[Groups(['order-create', 'order-show'])]
     private float $priceSummaryNet = 0;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Assert\NotBlank]
+    #[Assert\PositiveOrZero]
+    #[Groups(['order-create', 'order-show'])]
+    private float $priceSummaryVat = 0;
 
     #[ORM\Column(type: Types::INTEGER)]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
-    #[Groups(['order-create','order-show'])]
+    #[Groups(['order-create', 'order-show'])]
     private int $productsAmount = 0;
 
     #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderProduct::class, cascade: ['persist', 'remove'])]
-    #[Groups(['order-create', 'order-show'])]
+    #[Groups(['order-show'])]
     private Collection $orderProducts;
 
     public function __construct()
@@ -92,6 +98,17 @@ class Order
     public function setProductsAmount(int $productsAmount): Order
     {
         $this->productsAmount = $productsAmount;
+        return $this;
+    }
+
+    public function getPriceSummaryVat(): float
+    {
+        return $this->priceSummaryVat;
+    }
+
+    public function setPriceSummaryVat(float $priceSummaryVat): Order
+    {
+        $this->priceSummaryVat = $priceSummaryVat;
         return $this;
     }
 

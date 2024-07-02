@@ -20,6 +20,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'dualmedia_product')]
 class Product
 {
+    public const PRODUCT_VAT = '0.23';
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column(type: 'integer', unique: true)]
@@ -27,23 +29,23 @@ class Product
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     #[Assert\NotBlank]
-    #[Groups(['order-create','order-show'])]
+    #[Groups(['order-show'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['order-create','order-show'])]
+    #[Groups(['order-show'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
-    #[Groups(['order-create','order-show'])]
+    #[Groups(['order-show'])]
     private float $price;
 
     #[ORM\Column(type: Types::STRING, length: 3)]
     #[Assert\NotBlank]
     #[Assert\Currency]
-    #[Groups(['order-create','order-show'])]
+    #[Groups(['order-show'])]
     private string $currency;
 
     public function getId(): int

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\UuidV4;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -27,11 +28,13 @@ class OrderProduct
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['order-create','order-show'])]
     private Product $product;
 
     #[ORM\Column(type: 'integer')]
     #[Assert\NotBlank]
     #[Assert\Positive]
+    #[Groups(['order-create','order-show'])]
     private int $quantity;
 
     public function getId(): int
