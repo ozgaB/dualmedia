@@ -122,11 +122,6 @@ class Order
 
     public function addOrderProduct(OrderProduct $orderProduct): self
     {
-//        foreach ($this->orderProducts as $existingOrderProduct) {
-//            if ($existingOrderProduct->getProduct() === $orderProduct->getProduct()) {
-//                throw new \Exception('Duplicate product in the order.');
-//            }
-//        }
         $this->orderProducts->add($orderProduct);
         $orderProduct->setOrder($this);
 

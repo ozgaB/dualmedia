@@ -44,12 +44,14 @@ class OrderController extends AbstractController
         try {
             $manager->beginTransaction();
 
+            $productsAmount = 0;
             foreach ($order->getOrderProducts() as $orderProduct) {
                 $order->addOrderProduct($orderProduct);
+                $productsAmount += $orderProduct->getQuantity();
             }
 
             $priceCalculator->calculate($order);
-            $order->setProductsAmount($order->getOrderProducts()->count());
+            $order->setProductsAmount($productsAmount);
             $manager->persist($order);
             $manager->flush();
             $manager->commit();
