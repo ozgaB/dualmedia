@@ -30,7 +30,7 @@ class Product
     #[ORM\Column(type: Types::STRING, length: 255)]
     #[Assert\NotBlank]
     #[Groups(['order-show'])]
-    private ?string $name = null;
+    private string $name;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Groups(['order-show'])]
@@ -58,12 +58,12 @@ class Product
         $this->id = $id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(?string $name): Product
+    public function setName(string $name): Product
     {
         $this->name = $name;
         return $this;
