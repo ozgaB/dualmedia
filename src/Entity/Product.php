@@ -6,6 +6,9 @@ namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\UuidInterface;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Uid\UuidV4;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -14,54 +17,51 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Class Product.
  */
 #[ORM\Entity]
-#[ORM\Table(name: 'product')]
+#[ORM\Table(name: 'dualmedia_product')]
 class Product
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'uuid', unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    private UuidV4 $id;
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(type: 'integer', unique: true)]
+    private int $id;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     #[Assert\NotBlank]
-    private string $name;
+    #[Groups(['order-create','order-show'])]
+    private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['order-create','order-show'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
+    #[Groups(['order-create','order-show'])]
     private float $price;
 
     #[ORM\Column(type: Types::STRING, length: 3)]
     #[Assert\NotBlank]
     #[Assert\Currency]
+    #[Groups(['order-create','order-show'])]
     private string $currency;
 
-    #[ORM\Column(type: Types::INTEGER)]
-    #[Assert\NotBlank]
-    #[Assert\Positive]
-    private int $amount;
-
-    public function getId(): UuidV4
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(UuidV4 $id): Product
+    public function setId(int $id): void
     {
         $this->id = $id;
-        return $this;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(string $name): Product
+    public function setName(?string $name): Product
     {
         $this->name = $name;
         return $this;
@@ -97,17 +97,6 @@ class Product
     public function setCurrency(string $currency): Product
     {
         $this->currency = $currency;
-        return $this;
-    }
-
-    public function getAmount(): int
-    {
-        return $this->amount;
-    }
-
-    public function setAmount(int $amount): Product
-    {
-        $this->amount = $amount;
         return $this;
     }
 }

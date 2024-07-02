@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\UuidV4;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -16,48 +16,49 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Class Order.
  */
 #[ORM\Entity]
-#[ORM\Table(name: 'order')]
+#[ORM\Table(name: 'dualmedia_order')]
 class Order
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'uuid', unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    private UuidV4 $id;
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(type: 'integer', unique: true)]
+    private int $id;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
+    #[Groups(['order-create','order-show'])]
     private float $priceSummaryGross = 0;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
+    #[Groups(['order-create','order-show'])]
     private float $priceSummaryNet = 0;
 
     #[ORM\Column(type: Types::INTEGER)]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
+    #[Groups(['order-create','order-show'])]
     private int $productsAmount = 0;
 
-    #[ORM\ManyToMany(targetEntity: Product::class, cascade: ['persist'])]
-    #[ORM\JoinTable(name: 'order_products')]
-    private Collection $products;
+    #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderProduct::class, cascade: ['persist', 'remove'])]
+    #[Groups(['order-create', 'order-show'])]
+    private Collection $orderProducts;
 
     public function __construct()
     {
-        $this->products = new ArrayCollection();
+        $this->orderProducts = new ArrayCollection();
     }
 
-    public function getId(): UuidV4
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(UuidV4 $id): Order
+    public function setId(int $id): void
     {
         $this->id = $id;
-        return $this;
     }
 
     public function getPriceSummaryGross(): float
@@ -95,25 +96,29 @@ class Order
     }
 
     /**
-     * @return Collection<array-key,Product>
+     * @return Collection<array-key, OrderProduct>
      */
-    public function getProducts(): Collection
+    public function getOrderProducts(): Collection
     {
-        return $this->products;
+        return $this->orderProducts;
     }
 
-    public function addProduct(Product $product): self
+    public function addOrderProduct(OrderProduct $orderProduct): self
     {
-        if (false === $this->products->contains($product)) {
-            $this->products->add($product);
-        }
+//        foreach ($this->orderProducts as $existingOrderProduct) {
+//            if ($existingOrderProduct->getProduct() === $orderProduct->getProduct()) {
+//                throw new \Exception('Duplicate product in the order.');
+//            }
+//        }
+        $this->orderProducts->add($orderProduct);
+        $orderProduct->setOrder($this);
 
         return $this;
     }
 
-    public function removeProduct(Product $product): self
+    public function removeOrderProduct(OrderProduct $orderProduct): self
     {
-        $this->products->removeElement($product);
+        $this->orderProducts->removeElement($orderProduct);
 
         return $this;
     }

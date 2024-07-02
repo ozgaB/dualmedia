@@ -1,0 +1,20 @@
+
+### Tworzenie zamówienia podając listę identyfikatorów produktów wraz z kupowanymi ilościami
+POST https://localhost/order/create
+Content-Type: application/json
+
+{
+  "orderProducts": [
+    {
+      "product": 1,
+      "quantity": 2
+    },
+    {
+      "product": 2,
+      "quantity": 3
+    }
+  ]
+}
+
+### Zwracanie najważniejszych informacji (nie wszystkie) o zamówieniu w formacie JSON po podaniu identyfikatora zamówienia na wejściu
+GET https://localhost/orders/create
